@@ -8,6 +8,7 @@ import asyncio
 import random
 import time
 import os
+import numpy as np
 from .config import Config
 
 try:
@@ -61,7 +62,7 @@ async def rank(player_data: dict, group_id: int, type_: str) -> str:
             _max = max(all_user_data)
             _max_id = all_user[all_user_data.index(_max)]
             name = player_data[group_id][_max_id]["nickname"]
-            rst += f"{name}：{_max}\n"
+            rst += f"[{name}]：{_max}\n"
             all_user_data.remove(_max)
             all_user.remove(_max_id)
         rst = rst[:-1]
@@ -73,9 +74,13 @@ def random_bullet(num: int) -> List[int]:
     随机子弹排列
     :param num: 装填子弹数量
     """
-    bullet_lst = [0, 0, 0, 0, 0, 0, 0]
-    for i in random.sample([0, 1, 2, 3, 4, 5, 6], num):
-        bullet_lst[i] = 1
+    seed = int(time.time() * 1000) % 2**32  # 使用当前时间戳生成种子
+    random.seed(seed)
+    np.random.seed(seed)
+    bullet_lst = [1] * num + [0] * (7 - num)
+    for _ in range(3):  # 多次打乱
+        random.shuffle(bullet_lst)
+    np.random.shuffle(bullet_lst)  # 使用numpy的随机打乱
     return bullet_lst
 
 
@@ -108,10 +113,20 @@ class RussianManager:
         self._player_data[str(event.group_id)][str(event.user_id)]["is_sign"] = True
         self.save()
         return (
-            random.choice([f"这是今天的钱，祝你好运...", "今天可别输光光了."]) + f"\n你获得了 {gold} 金币",
+            f"你获得了 {gold} 金币",
             gold,
         )
-
+        
+    def gift(self, event: GroupMessageEvent, accept_id, gold_num):
+        gift_user = self.get_user_data(event)
+        if gold_owner_data.get('gold') < gold_num:
+            return "你似乎送不起呢"
+        accept_user = self.get_user_data(GroupMessageEvent(group_id=event.group_id, user_id = accept_id))
+        group_id = str(event.group_id)
+        self._player_data[group_id][str(event.user_id)]['gold'] -= gold_num
+        self._player_data[group_id][str(accept_id)]['gold'] += gold_num
+        return f"{gift_user['nickname']}成功赠送给{accept_user['nickname']} {gold_num} 金币"
+    
     def accept(self, event: GroupMessageEvent) -> Union[str, Message]:
         """
         接受决斗请求
@@ -380,7 +395,7 @@ class RussianManager:
                 else player2_name
             )
             await asyncio.sleep(0.5)
-            await bot.send(event, f"这场对决是 {win_name} 胜利了")
+            # await bot.send(event, f"这场对决是 {win_name} 胜利了")
             await self.end_game(bot, event)
 
     async def _shot_check(self, bot: Bot, event: GroupMessageEvent) -> Optional[str]:
@@ -545,7 +560,7 @@ class RussianManager:
         lose_user = self._player_data[str(event.group_id)][str(lose_user_id)]
         bullet_str = ""
         for x in self._current_player[event.group_id]["bullet"]:
-            bullet_str += "__ " if x == 0 else "| "
+            bullet_str += "__ " if x == 0 else "⁍ "
         logger.info(f"俄罗斯轮盘：胜者：{win_name} - 败者：{lose_name} - 金币：{gold}")
         self._current_player[event.group_id] = {}
         await bot.send(
