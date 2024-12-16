@@ -11,6 +11,7 @@ class Player(Model):
     """Group ID"""
     uid: Mapped[int] = mapped_column(primary_key=True)
     """User ID"""
+    nickname: Mapped[str] = mapped_column(default="russian player")
     gold: Mapped[int] = mapped_column(default=0)
     """User's Gold"""
     make_gold: Mapped[int] = mapped_column(default=0)
