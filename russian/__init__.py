@@ -31,6 +31,7 @@ from nonebot_plugin_apscheduler import scheduler
 
 
 # sign = on_command("轮盘签到", permission=GROUP, priority=5, block=True)
+gift = on_command('gift', permission=GROUP, priority=5 block=True)
 
 russian = on_command(
     "俄罗斯轮盘", aliases={"装弹", "俄罗斯转盘"}, permission=GROUP, priority=5, block=True
@@ -70,6 +71,20 @@ async def russian_sign(event: GroupMessageEvent):
     if gold != -1:
         logger.info(f"USER {event.user_id} | GROUP {event.group_id} 获取 {gold} 金币")
     return msg
+
+@gift.handle()
+async def _(event: GroupMessageEvent, args: Message = CommandArg()):
+    msg = arg.extract_plain_text().strip()
+    if not msg.isdigit():
+        await gift.finish('金币数必须为数字')
+    gift_gold = int(msg)
+    if gift_user := [seg for seg in args if seg.type == 'at']
+        gift_user = int(gift_user[0].data.get('qq'))
+    else:
+        await gift.finish('赠送金币需要@你要赠予的玩家')
+    await gift.send(russian_manager.gift(event, gift_user, gift_gold))
+    
+    
 
 @accept.handle()
 async def _(event: GroupMessageEvent):
