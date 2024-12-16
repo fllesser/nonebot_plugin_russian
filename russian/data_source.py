@@ -124,6 +124,7 @@ class RussianManager:
     
         event.user_id = accept_id
         accept_user = self.get_user_data(event)
+        event.user_id = gift_user['user_id']
         group_id = str(event.group_id)
         self._player_data[group_id][gift_user['user_id']]['gold'] -= gold_num
         self._player_data[group_id][str(accept_id)]['gold'] += gold_num
