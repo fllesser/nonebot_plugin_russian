@@ -1,5 +1,4 @@
 from datetime import date
-from typing_extensions import TypedDict
 
 from nonebot_plugin_orm import Model
 from sqlalchemy.orm import Mapped, mapped_column
