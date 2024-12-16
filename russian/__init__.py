@@ -31,7 +31,7 @@ from nonebot_plugin_apscheduler import scheduler
 
 
 # sign = on_command("轮盘签到", permission=GROUP, priority=5, block=True)
-gift = on_command('gift', permission=GROUP, priority=5 block=True)
+gift = on_command('赠送', permission=GROUP, priority=5 block=True)
 
 russian = on_command(
     "俄罗斯轮盘", aliases={"装弹", "俄罗斯转盘"}, permission=GROUP, priority=5, block=True
