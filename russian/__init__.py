@@ -74,7 +74,7 @@ async def russian_sign(event: GroupMessageEvent):
 
 @gift.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
-    msg = arg.extract_plain_text().strip()
+    msg = args.extract_plain_text().strip()
     if not msg.isdigit():
         await gift.finish('金币数必须为数字')
     gift_gold = int(msg)
