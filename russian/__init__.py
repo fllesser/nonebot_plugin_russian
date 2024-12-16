@@ -8,10 +8,13 @@ from nonebot.adapters.onebot.v11 import (
 )
 from nonebot.typing import T_State
 from nonebot.params import Depends, CommandArg
-from .utils import is_number, get_message_at
 from nonebot.log import logger
+
+from .utils import is_number, get_message_at
 from .data_source import russian_manager, max_bet_gold
 
+require("nonebot_plugin_orm")
+from nonebot_plugin_orm import async_scoped_session
 
 __zx_plugin_name__ = "俄罗斯轮盘"
 
