@@ -77,7 +77,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     msg = args.extract_plain_text().strip()
     if not msg.isdigit():
         await gift.finish('金币数必须为数字')
-    gift_gold = int(msg)
+    gift_gold = abs(int(msg))
     if gift_user := [seg for seg in args if seg.type == 'at']:
         gift_user = int(gift_user[0].data.get('qq'))
     else:
