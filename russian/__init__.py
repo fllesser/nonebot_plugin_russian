@@ -30,7 +30,7 @@ require("nonebot_plugin_apscheduler")
 from nonebot_plugin_apscheduler import scheduler
 
 
-sign = on_command("轮盘签到", permission=GROUP, priority=5, block=True)
+# sign = on_command("轮盘签到", permission=GROUP, priority=5, block=True)
 
 russian = on_command(
     "俄罗斯轮盘", aliases={"装弹", "俄罗斯转盘"}, permission=GROUP, priority=5, block=True
@@ -63,13 +63,13 @@ russian_rank = on_command(
 my_gold = on_command("我的金币", permission=GROUP, priority=5, block=True)
 
 
-@sign.handle()
-async def _(event: GroupMessageEvent):
+#@sign.handle()
+async def russian_sign(event: GroupMessageEvent):
     msg, gold = russian_manager.sign(event)
-    await sign.send(msg, at_sender=True)
+    # await sign.send(msg, at_sender=True)
     if gold != -1:
         logger.info(f"USER {event.user_id} | GROUP {event.group_id} 获取 {gold} 金币")
-
+    return msg
 
 @accept.handle()
 async def _(event: GroupMessageEvent):
@@ -136,7 +136,9 @@ async def _(
             msg = msg[0].strip()
             if is_number(msg) and not (int(msg) < 1 or int(msg) > 6):
                 state["bullet_num"] = int(msg)
-            if is_number(money) and 0 < int(money) <= max_bet_gold:
+            if is_number(money) and  int(money) <= max_bet_gold:
+                if int(money) < 5:
+                    await russian.finish("三块四块的穷鬼就别玩了吧",  at_sender=True)
                 state["money"] = int(money)
     state["at"] = get_message_at(event.json())
 
@@ -147,6 +149,7 @@ async def _(
 ):
     bullet_num = state["bullet_num"]
     at_ = state["at"]
+    
     money = state["money"] if state.get("money") else 200
     user_money = russian_manager.get_user_data(event)["gold"]
     if bullet_num < 0 or bullet_num > 6:
