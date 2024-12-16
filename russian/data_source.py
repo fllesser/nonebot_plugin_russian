@@ -121,9 +121,11 @@ class RussianManager:
         gift_user = self.get_user_data(event)
         if gold_owner_data.get('gold') < gold_num:
             return "你似乎送不起呢"
-        accept_user = self.get_user_data(GroupMessageEvent(group_id=event.group_id, user_id = accept_id))
+    
+        event.user_id = accept_id
+        accept_user = self.get_user_data(event)
         group_id = str(event.group_id)
-        self._player_data[group_id][str(event.user_id)]['gold'] -= gold_num
+        self._player_data[group_id][gift_user[user_id]]['gold'] -= gold_num
         self._player_data[group_id][str(accept_id)]['gold'] += gold_num
         return f"{gift_user['nickname']}成功赠送给{accept_user['nickname']} {gold_num} 金币"
     
