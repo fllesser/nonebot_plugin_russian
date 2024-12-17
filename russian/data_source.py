@@ -333,7 +333,9 @@ class RussianManager:
         player1_name = self._current_player[event.group_id]["player1"]
         player2_name = self._current_player[event.group_id]["player2"]
         current_index = self._current_player[event.group_id]["index"]
-        _tmp = self._current_player[event.group_id]["bullet"][
+        bullet_lst = self._current_player[event.group_id]["bullet"]
+        bullet_num = self._current_player[event.group_id]["bullet_num"]
+        _tmp = bullet_lst[
             current_index : current_index + count
         ]
         if 1 in _tmp:
@@ -348,11 +350,11 @@ class RussianManager:
             )
             # 概率
             x = str(
-                float((self._current_player[event.group_id]["bullet_num"]))
+                float(bullet_num)
                 / float(
                     self._current_player[event.group_id]["null_bullet_num"]
                     - count
-                    + self._current_player[event.group_id]["bullet_num"]
+                    + bullet_num
                 )
                 * 100
             )[:5]
@@ -373,7 +375,7 @@ class RussianManager:
                     f"轮到 {next_user}了"
                 ),
             )
-            self._current_player[event.group_id]["bullet"]
+            bullet_lst = [0] * (current_index + count) + random.shuffle(bullet_lst[current_index + count:])
             self._current_player[event.group_id]["null_bullet_num"] -= count
             self._current_player[event.group_id]["next"] = (
                 self._current_player[event.group_id][1]
@@ -566,7 +568,7 @@ class RussianManager:
         lose_user = self._player_data[str(event.group_id)][str(lose_user_id)]
         bullet_str = ""
         for x in self._current_player[event.group_id]["bullet"]:
-            bullet_str += "__ " if x == 0 else "⁍ "
+            bullet_str += "_ " if x == 0 else "⁍ "
         logger.info(f"俄罗斯轮盘：胜者：{win_name} - 败者：{lose_name} - 金币：{gold}")
         self._current_player[event.group_id] = {}
         await bot.send(
