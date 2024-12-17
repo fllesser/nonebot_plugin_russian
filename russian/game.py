@@ -1,7 +1,10 @@
 from .model import Player
+from nonebot import get_driver
 import numpy as np
 import random
 import time
+
+bot_name = next(iter(get_driver().config.nickname), "本裁判")
 
 class GameManager:
     
@@ -12,19 +15,46 @@ class GameManager:
         if game := self.get(gid):
             if game.istimeout():
                 game = await self.settlement(gid)
+                #todo
                 return f"对决已超时，强行结束"
             if game.is_begin:
                 return f"[{game.creator.nickname}] 和 [{game.accepter.nickname}] 的对决还未结束"
             return f'现在是 {game.creator.nickname} 发起的对决\n请等待比赛结束后再开始下一轮...'
         return ""
     
-    def check_shot(self, gid: int, count: int = 1, player: Player):
+    def check_shot(self, gid: int, count: int = 1, shoter: Player):
         if game := self.get(gid):
             if game.istimeout():
                 if not game.is_begin:
                     return "这场对决已经过时了，请重新装弹吧！"
                 else:
-                    self.settlement()
+                    await self.settlement()
+                    return #todo
+            if not game.is_begin:
+                if game.accepter is None:
+                    return "请这位勇士先发送 接受对决 来站上擂台..."
+                if shoter == game.creator:
+                    "baka，游戏还没开始, 你是要枪毙自己嘛笨蛋！"
+                if shoter == game.accepter:
+                    return "请先 接受挑战 !"
+                if shoter != game.accepter:
+                    returm f"[{game.creator.nickname}]已经邀请了[{game.accepter.nickname}]作为对手"
+         
+            if game.operator != shoter:
+                if shoter in [game.creator, game.accepter]:
+                    return f"你的左轮不是连发的！该 [{shoter.nickname}] 开枪了"
+                else:
+                    return random.choice(
+                        [
+                            f"不要打扰 [{game.creator.nickname}] 和 [{game.accepter.nickname}] 的决斗啊！",
+                            f"给我好好做好一个观众！不然{bot_name}就要生气了",
+                            f"不要捣乱啊baka, {shoter.nickname}！",
+                        ]
+                    )
+            
+        else:
+            return "目前没有进行的决斗，请发送 装弹 开启决斗吧！"
+            
                 
     
     def init_game(self, bullet_num: int, gold: int, creator: Player, accepter: Player = None):
