@@ -24,3 +24,24 @@ class Player(Model):
     """User's Lose Count"""
     last_sign: Mapped[date]
     """Last Sign Date"""
+
+    def sign(self) -> Tuple[str, int]:
+        """
+        签到
+        :param event: event
+        """
+        today_date = date.today()
+        if last_sign == today_date
+            return "贪心的人是不会有好运的...", -1
+        gold = random.randint(sign_gold[0], sign_gold[1])
+        self.gold += gold
+        self.make_gold += gold
+        self.last_sign = today_date
+        self.save()
+        return (
+            f"你获得了 {gold} 金币",
+            gold,
+        )
+    
+    def save(self):
+        ''' save to db'''
