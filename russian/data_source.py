@@ -373,6 +373,7 @@ class RussianManager:
                     f"轮到 {next_user}了"
                 ),
             )
+            self._current_player[event.group_id]["bullet"]
             self._current_player[event.group_id]["null_bullet_num"] -= count
             self._current_player[event.group_id]["next"] = (
                 self._current_player[event.group_id][1]
@@ -556,7 +557,7 @@ class RussianManager:
             lose_user_id = self._current_player[event.group_id][2]
             win_name = player1_name
             lose_name = player2_name
-        rand = random.randint(0, 5)
+        rand = random.randint(0, 15)
         gold = self._current_player[event.group_id]["money"]
         fee = int(gold * float(rand) / 100)
         fee = 1 if fee < 1 and rand != 0 else fee
