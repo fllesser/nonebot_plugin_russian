@@ -6,23 +6,46 @@ import time
 class GameManager:
     
     def __init__(self):
-        self.game_dict = {}
-        self.
+        self.game_dict: dict[int, Game] = dict()
    
-    def ready(self, gid: int, uid: int, bullet_num: int = 2, gold: int = 200, atid: int = None):
-        if cur_game := self.get(gid):
-            return f'现在是 {cur_game.plr1.nickname} 发起的对决\n请等待比赛结束后再开始下一轮...'
-        creator := await get_bydb(uid):
-           
-        accepter = 
-      
+    async def check_game_status(self, gid: int) -> str:
+        if game := self.get(gid):
+            if game.istimeout():
+                game = await self.settlement(gid)
+                return f"对决已超时，强行结束"
+            if game.is_begin:
+                return f"[{game.creator.nickname}] 和 [{game.accepter.nickname}] 的对决还未结束"
+            return f'现在是 {game.creator.nickname} 发起的对决\n请等待比赛结束后再开始下一轮...'
+        return ""
+    
+    def check_shot(self, gid: int, count: int = 1, player: Player):
+        if game := self.get(gid):
+            if game.istimeout():
+                if not game.is_begin:
+                    return "这场对决已经过时了，请重新装弹吧！"
+                else:
+                    self.settlement()
+                
+    
+    def init_game(self, bullet_num: int, gold: int, creator: Player, accepter: Player = None):
+        gid = creator.gid
+        self.game_dict[gid] = Game(gid, creator, accepter, bullet_num, gold)
+          
+    def accept(self, accepter: Player):
+        gid = accepter.gid
+        if game := self.get(gid):
+            if game.accepter in (accepter, None):
+                game.accepter = accepter
+                game.is_begin = True
+                game.time = time.time()
+                return game, True
+    
+    async def settlement(self, gid: int) -> Game:
+        game = self.get(gid)
+        if not game.is_begin:
+            return game_dict.pop(gid)
         
-        self.game_dict[gid] = Game(gid, creator, None, bullet_num, gold)
-            
         
-    def accept(self, gid: int, uid: int):
-        game = self.
-
     def get(self, gid:int) -> Game:
         return game_dict.get(gid)
 
@@ -34,22 +57,47 @@ class Game:
         self.accepter = accepter
         self.gold = gold
         self.bullet_num = bullet_num
-        self.bullet_lst = shuffle_bullet(bullet_num, 7)
+        self.bullet_lst = None
+        self.index = 0
+        self.operator = None
         self.is_begin = False
+        # self.is_end = False
+        self.time = time.time()
         
-
-    
-    def shuffle_bullet(self, num: int, cap: int) -> List[int]:
+    def shuffle_bullet(self):
         """
         随机子弹排列
         :param num: 装填子弹数量
         """
-        seed = int(time.time() * 1000) % 2**32  # 使用当前时间戳生成种子
-        bullet_lst = [1] * num + [0] * (cap - num)
+        if self.bullet_lst is None:
+            self.operator = random.choice([self.creator, self.accepter])
+            self.bullet_lst = [1] * self.bullet_num + [0] * (7 - bullet_num)
+        seed = int(self.time * 1000) % 2**32  # 使用当前时间戳生成种子
+        sub_lst = self.bullet_lst[self.index:]
         random.seed(seed)
-        random.shuffle(bullet_lst)
+        random.shuffle(sub_lst)
         np.random.seed(seed)
-        np.random.shuffle(bullet_lst)  # 使用numpy的随机打乱
-        return bullet_lst
+        np.random.shuffle(sub_lst)  # 使用numpy的随机打乱
+        self.bullet_lst[self.index:] = sub_lst
+    
+    def istimeout(self) -> bool:
+        return time.time() - self.time > 30
+    
         
-     
+    async def shot(self, count: int = 1):
+        shot_lst = self.bullet_lst[indexindex+count]
+        if 1 in shot_lst:
+            flag = self.index + shot_lst.index(1) + 1
+            return random.choice(
+                    [
+                        '"嘭！"，你直接去世了',
+                        "眼前一黑，你直接穿越到了异世界...(死亡)",
+                        "终究还是你先走一步...",
+                    ]
+                ) + f"\n第 {flag} 发子弹送走了你..."
+        else:
+            self.index += count
+            self.operator = self.creator if self.operator == self.accepter else self.accepter
+            self.time = time.time()
+            x = str(float(bullet_num) / float(7 - self.index) * 100)[:5]
+            msg = f"连开{count}枪，" if count > 1 else ""
