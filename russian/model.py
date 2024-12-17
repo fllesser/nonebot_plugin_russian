@@ -24,6 +24,9 @@ class Player(Model):
     """User's Lose Count"""
     last_sign: Mapped[date]
     """Last Sign Date"""
+    
+    def __eq__(self, other) -> bool:
+        return isinstance(other, Player) and self.gid == other.gid and self.uid == other.uid
 
     def sign(self) -> Tuple[str, int]:
         """
