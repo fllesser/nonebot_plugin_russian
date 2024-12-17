@@ -45,3 +45,12 @@ class Player(Model):
     
     def save(self):
         ''' save to db'''
+        
+    def gift(self, player: Player, gold: int) -> str:
+        if self.gold < gold:
+            return "你似乎送不起呢"
+        self.gold -= gold_num
+        player.gold += gold
+        self.save()
+        player.save()
+        return f"{gift_user['nickname']}成功赠送给{accept_user['nickname']} {gold_num} 金币"
