@@ -39,7 +39,6 @@ class GameManager:
                     return "请先 接受挑战 !"
                 if shoter != game.accepter:
                     returm f"[{game.creator.nickname}]已经邀请了[{game.accepter.nickname}]作为对手"
-         
             if game.operator != shoter:
                 if shoter in [game.creator, game.accepter]:
                     return f"你的左轮不是连发的！该 [{shoter.nickname}] 开枪了"
@@ -91,6 +90,7 @@ class Game:
         self.index = 0
         self.operator = None
         self.is_begin = False
+        self.is_fully_random = True
         # self.is_end = False
         self.time = time.time()
         
