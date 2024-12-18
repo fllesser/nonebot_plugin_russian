@@ -74,7 +74,6 @@ class GameManager:
         if not game.is_begin:
             return game_dict.pop(gid)
         
-        
     def get(self, gid:int) -> Game:
         return game_dict.get(gid)
 
