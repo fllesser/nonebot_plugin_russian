@@ -46,14 +46,14 @@ class Player(Model):
             gold,
         )
     
-    def save(self):
+    async def save(self):
         ''' save to db'''
         
-    def gift(self, player: Player, gold: int) -> str:
+    async def gift(self, accepter: Player, gold: int) -> str:
         if self.gold < gold:
             return "你似乎送不起呢"
         self.gold -= gold_num
         player.gold += gold
-        self.save()
-        player.save()
-        return f"{gift_user['nickname']}成功赠送给{accept_user['nickname']} {gold_num} 金币"
+        await self.save()
+        await player.save()
+        return f"[{self.nickname}]成功转账给[{accepter.nickname}] {gold} 金币"
