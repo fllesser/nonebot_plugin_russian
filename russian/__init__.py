@@ -37,7 +37,7 @@ from nonebot_plugin_apscheduler import scheduler
 gift = on_command('赠送', permission=GROUP, priority=5, block=True)
 
 russian = on_command(
-    "俄罗斯轮盘", aliases={"装弹", "俄罗斯转盘"}, permission=GROUP, priority=5, block=True
+    "俄罗斯轮盘", aliases={"装弹", "装炮"}, permission=GROUP, priority=5, block=True
 )
 
 accept = on_command(
@@ -49,10 +49,10 @@ refuse = on_command(
 )
 
 shot = on_command(
-    "开枪", aliases={"咔", "嘭", "嘣"}, permission=GROUP, priority=5, block=True
+    "开枪", aliases={"咔", "嘭", "嘣", "biu"}, permission=GROUP, priority=5, block=True
 )
 
-settlement = on_command("结算", permission=GROUP, priority=5, block=True)
+# settlement = on_command("结算", permission=GROUP, priority=5, block=True)
 
 record = on_command("我的战绩", permission=GROUP, priority=5, block=True)
 
@@ -100,11 +100,11 @@ async def _(bot: Bot, event: GroupMessageEvent):
     await refuse.send(msg, at_sender=True)
 
 
-@settlement.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
-    msg = russian_manager.settlement(event)
-    await settlement.send(msg, at_sender=True)
-    await russian_manager.end_game(bot, event)
+# @settlement.handle()
+# async def _(bot: Bot, event: GroupMessageEvent):
+#     msg = russian_manager.settlement(event)
+#     await settlement.send(msg, at_sender=True)
+#     await russian_manager.end_game(bot, event)
 
 
 async def get_bullet_num(
