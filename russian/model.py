@@ -7,9 +7,11 @@ from sqlalchemy.orm import Mapped, mapped_column
 class Player(Model):
     __tablename__ = "russian_players"
 
-    gid: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    
+    gid: Mapped[int] = mapped_column(nullabe=False)
     """Group ID"""
-    uid: Mapped[int] = mapped_column(primary_key=True)
+    uid: Mapped[int] = mapped_column(nullabe=False)
     """User ID"""
     nickname: Mapped[str] = mapped_column(default="russian player")
     gold: Mapped[int] = mapped_column(default=0)
