@@ -1,3 +1,4 @@
+import re
 from nonebot import on_command, require
 from nonebot.adapters.onebot.v11 import (
     GROUP,
@@ -93,8 +94,8 @@ async def _(event: GroupMessageEvent):
 
 @refuse.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    msg = await russian_manager.refuse(bot, event)
-    await refuse.send(msg, at_sender=True)
+    if msg := await russian_manager.refuse(bot, event):
+        await refuse.send(msg, at_sender=True)
 
 
 @settlement.handle()
@@ -200,6 +201,11 @@ async def _(
 @shot.handle()
 async def _(bot: Bot, event: GroupMessageEvent, arg: Message = CommandArg()):
     count = arg.extract_plain_text().strip()
+    pattern = r'[咔嘭嘣]'
+    # 使用 findall 方法找到所有匹配的字符
+    if matches := re.findall(pattern, count):
+        count = len(matches) + 1
+    # 统计匹配到的字符数量
     if is_number(count):
         count = int(count)
         if count > 7 - russian_manager.get_current_bullet_index(event):

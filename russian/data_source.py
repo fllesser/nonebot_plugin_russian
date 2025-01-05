@@ -209,9 +209,10 @@ class RussianManager:
             )
             self._current_player[event.group_id] = {}
             return Message(
-                f"{MessageSegment.at(self._current_player[event.group_id][1])}\n"
+                MessageSegment.at(event.user_id),
                 f"{at_player_name}拒绝了你的对决！"
             )
+        return ""
 
     def settlement(self, event: GroupMessageEvent) -> str:
         """
@@ -556,7 +557,7 @@ class RussianManager:
             lose_user_id = self._current_player[event.group_id][2]
             win_name = player1_name
             lose_name = player2_name
-        rand = random.randint(0, 5)
+        rand = random.randint(0, 15)
         gold = self._current_player[event.group_id]["money"]
         fee = int(gold * float(rand) / 100)
         fee = 1 if fee < 1 and rand != 0 else fee
