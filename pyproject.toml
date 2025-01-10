@@ -3,7 +3,7 @@ name = "nonebot_plugin_russian"
 packages = [
     {include = "russian"}
 ]
-version = "0.2.1"
+version = "0.2.10"
 description = "Nonebot2插件 俄罗斯轮盘"
 authors = ["HibiKier <775757368@qq.com>"]
 license = "MIT"
