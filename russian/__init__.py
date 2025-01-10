@@ -1,6 +1,8 @@
 import re
 from nonebot import on_command, require
 from nonebot.adapters.onebot.v11 import (
+    GROUP_ADMIN,
+    GROUP_OWNER,
     GROUP,
     Bot,
     GroupMessageEvent,
@@ -9,6 +11,7 @@ from nonebot.adapters.onebot.v11 import (
 )
 from nonebot.typing import T_State
 from nonebot.params import Depends, CommandArg
+from nonebot.permission import SUPERUSER
 from .utils import is_number, get_message_at
 from nonebot.log import logger
 from .data_source import russian_manager, max_bet_gold
@@ -35,7 +38,7 @@ from nonebot_plugin_apscheduler import scheduler
 gift = on_command('赠送', permission=GROUP, priority=5, block=True)
 
 russian = on_command(
-    "俄罗斯轮盘", aliases={"装弹", "俄罗斯转盘"}, permission=GROUP, priority=5, block=True
+    "俄罗斯轮盘", aliases={"装弹", "俄罗斯转盘"}, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, priority=5, block=True
 )
 
 accept = on_command(
